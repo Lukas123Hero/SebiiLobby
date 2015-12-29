@@ -1,0 +1,123 @@
+package de.lukas123hero.sebiilobby;
+
+import java.util.ArrayList;
+
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import de.lukas123hero.sebiilobby.commands.LobbyCommand;
+import de.lukas123hero.sebiilobby.listener.DamageListener;
+import de.lukas123hero.sebiilobby.listener.DropListener;
+import de.lukas123hero.sebiilobby.listener.FoodListener;
+import de.lukas123hero.sebiilobby.listener.InteractListener;
+import de.lukas123hero.sebiilobby.listener.InventoryClickListener;
+import de.lukas123hero.sebiilobby.listener.JoinListener;
+import de.lukas123hero.sebiilobby.listener.PickupListener;
+import de.lukas123hero.sebiilobby.listener.QuitListener;
+import de.lukas123hero.sebiilobby.listener.WeatherListener;
+import de.lukas123hero.sebiilobby.manager.SebiiGroupsManager;
+import de.lukas123hero.sebiilobby.mysql.MySQL;
+import de.lukas123hero.sebiilobby.utils.ServerManager;
+
+public class main extends JavaPlugin {
+
+	public static Plugin plugin;
+	
+	public static String TABLE;
+	public static String LOBBYTABLE = "LobbyLocations";
+	public static String SERVERTABLE = "OnlineLobbys";
+	
+	public static String password;
+	public static String username;
+	public static String database;
+	public static String host;
+	public static String port;
+
+	public static String NAVIGATOR_META = "§8• §aNavigator §8•";
+	public static String HIDER_META = "§8• §eSpieler verstecken §8•";
+	public static String SHOWER_META = "§8• §eSpieler anzeigen §8•";
+	public static String LOBBYSWITCHER_META = "§8• §bLobby wechseln §8•";
+	public static String SILENTLOBBY_META = "§8• §cSilentLobby §8•";
+	public static String AUTONICK_META = "§8• §eAutoNick §8•";
+	
+	public static ArrayList<Player> USE = new ArrayList<>();
+	public static ArrayList<Player> TONICK = new ArrayList<>();
+	public static ArrayList<Player> TONICKMAN = new ArrayList<>();
+	
+	/*
+	 * 
+	 * 
+	 * 			PERMISSIONS:
+	 * 		- sebiilobby.silentlobby
+	 * 		- sebiilobby.lobbycommand
+	 * 		- sebiilobby.locations (Setzen der Locations)
+	 * 		- sebiilobby.hidebypass
+	 * 
+	 * 
+	 */
+	
+	@Override
+	public void onEnable() {
+
+		plugin = this;
+		
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
+		plugin.getConfig().addDefault("MySQL.host", "host");
+		plugin.getConfig().addDefault("MySQL.port", "password");
+		plugin.getConfig().addDefault("MySQL.username", "username");
+		plugin.getConfig().addDefault("MySQL.password", "password");
+		plugin.getConfig().addDefault("MySQL.database", "database");
+		plugin.getConfig().addDefault("MySQL.tablename", "SebiiLobby");
+		plugin.getConfig().addDefault("BungeeCordName", "lobby1");
+		plugin.getConfig().addDefault("Lobbys", "1");
+
+		plugin.getConfig().options().copyDefaults(true);
+
+		plugin.saveConfig();
+
+		TABLE = plugin.getConfig().getString("MySQL.tablename");
+
+		username = plugin.getConfig().getString("MySQL.username");
+		password = plugin.getConfig().getString("MySQL.password");
+		database = plugin.getConfig().getString("MySQL.database");
+		host = plugin.getConfig().getString("MySQL.host");
+		port = plugin.getConfig().getString("MySQL.port");
+
+		MySQL.connect();
+		MySQL.createTable();
+		
+		ServerManager.addLobbys();
+		ServerManager.add();
+		ServerManager.updateInvs();
+		
+		
+		SebiiGroupsManager.nickPlayers();
+		
+		getServer().getPluginManager().registerEvents(new JoinListener(), this);
+		getServer().getPluginManager().registerEvents(new QuitListener(), this);
+		getServer().getPluginManager().registerEvents(new InteractListener(), this);
+		getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
+		getServer().getPluginManager().registerEvents(new FoodListener(), this);
+		getServer().getPluginManager().registerEvents(new DamageListener(), this);
+		getServer().getPluginManager().registerEvents(new WeatherListener(), this);
+		getServer().getPluginManager().registerEvents(new DropListener(), this);
+		getServer().getPluginManager().registerEvents(new PickupListener(), this);
+		
+		getCommand("lobby").setExecutor(new LobbyCommand());
+
+		super.onEnable();
+	}
+
+	@Override
+	public void onDisable() {
+		
+		ServerManager.disconnect();
+		
+		MySQL.close();
+		
+		super.onDisable();
+	}
+
+}
