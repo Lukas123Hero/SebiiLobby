@@ -1,0 +1,79 @@
+package de.lukas123hero.sebiilobby.api;
+
+import java.util.ArrayList;
+
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+
+public class ItemCreator {
+
+	@SuppressWarnings("deprecation")
+	public static ItemStack CreateItemWithID(int id, int subid, int amount,
+			String Displayname, ArrayList<String> lore) {
+		ItemStack is = new ItemStack(id, amount, (short) subid);
+		ItemMeta meta = is.getItemMeta();
+		meta.setDisplayName(Displayname);
+		meta.setLore(lore);
+		is.setItemMeta(meta);
+
+		return is;
+
+	}
+
+	public static ItemStack CreateItemWithMaterial(Material m, int subid,
+			int amount, String Displayname, ArrayList<String> lore) {
+		ItemStack is = new ItemStack(m, amount, (short) subid);
+		ItemMeta meta = is.getItemMeta();
+		meta.setDisplayName(Displayname);
+		meta.setLore(lore);
+		is.setItemMeta(meta);
+
+		return is;
+
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static ItemStack CreateEnchantetItemWithID(int id, int subid,
+			int amount, String Displayname, ArrayList<String> lore) {
+		ItemStack is = new ItemStack(id, amount, (short) subid);
+		ItemMeta meta = is.getItemMeta();
+		meta.setDisplayName(Displayname);
+		meta.setLore(lore);
+		meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		is.setItemMeta(meta);
+
+		return is;
+
+	}
+	
+	public static ItemStack CreateEnchantetItemWithMaterial(Material m, int subid,
+			int amount, String Displayname, ArrayList<String> lore) {
+		ItemStack is = new ItemStack(m, amount, (short) subid);
+		ItemMeta meta = is.getItemMeta();
+		meta.setDisplayName(Displayname);
+		meta.setLore(lore);
+		meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		is.setItemMeta(meta);
+
+		return is;
+
+	}
+	
+	public static ItemStack CreateSkull(int amount, String Displayname, String SkinOwner, ArrayList<String> lore) {
+		ItemStack is = new ItemStack(Material.SKULL_ITEM, amount, (byte) 3);
+		SkullMeta meta = (SkullMeta) is.getItemMeta();
+		meta.setDisplayName(Displayname);
+		meta.setOwner(SkinOwner);
+		meta.setLore(lore);
+		is.setItemMeta(meta);
+		
+ 		return is;
+		
+	}
+}
